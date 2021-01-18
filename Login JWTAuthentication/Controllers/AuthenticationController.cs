@@ -92,5 +92,45 @@ namespace Login_JWTAuthentication.Controllers
             }
             return Unauthorized();
         }
+
+
+
+        [HttpPost]
+        [Route("RegisterAdmin")]
+        public async Task<IActionResult> RegisterAdmin ([FromBody] RegisterModel model)
+        {
+            var userExist = await _userManager.FindByNameAsync(model.Username);
+
+            if (userExist != null)
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User Already Exist" });
+
+            ApplicationUser user = new ApplicationUser()
+            {
+                Email = model.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = model.Username
+            };
+
+            //NB: The Password you choose should contain atleast a numeric, alphanumeric, and a capital case letter eg Example@123
+            //this is provided by asp.net core identity
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed" });
+            }
+
+            if (!await _roleManager.RoleExistsAsync(Roles.Admin))
+                await _roleManager.CreateAsync(new IdentityRole(Roles.Admin));
+
+            if (!await _roleManager.RoleExistsAsync(Roles.User))
+                await _roleManager.CreateAsync(new IdentityRole(Roles.User));
+
+            if(await _roleManager.RoleExistsAsync(Roles.Admin))
+            {
+                await _userManager.AddToRoleAsync(user, Roles.Admin);
+            }
+
+            return Ok(new Response { Status = "Success", Message = "User Created Successfully" });
+        }
     }
 }
