@@ -81,7 +81,7 @@ namespace Login_JWTAuthentication.Controllers
                 var token = new JwtSecurityToken(
                     issuer: _configuration["JWT:ValidIssuer"],
                     audience: _configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddHours(2),
+                    expires: DateTime.Now.AddHours(20),
                     claims: authClaims,
                     signingCredentials: new SigningCredentials(authSigninKey, SecurityAlgorithms.HmacSha256)
                     );

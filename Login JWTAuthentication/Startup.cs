@@ -73,9 +73,9 @@ namespace Login_JWTAuthentication
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = Configuration["Jwt:Issuer"],
-                        ValidAudience = Configuration["Jwt:Issuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                        ValidIssuer = Configuration["JWT:ValidIssuer"],
+                        ValidAudience = Configuration["JWT:ValidAudience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Secret"]))
                     };
                 });
 
@@ -91,7 +91,7 @@ namespace Login_JWTAuthentication
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            //app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
